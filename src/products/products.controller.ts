@@ -35,26 +35,7 @@ export class ProductsController {
         );
       }
 
-      const imgProducto = file.originalname;
-      const urlImg = `http://localhost:3000/uploads/products/${imgProducto}`;
-
-      // Guardar la imagen en el sistema de archivos
-      const fs = require('fs');
-      const path = require('path');
-      const imageFolder = 'uploads/products';
-      const imagePath = path.join(__dirname, '..', '..', imageFolder);
-      if (!fs.existsSync(imagePath)) {
-        fs.mkdirSync(imagePath, { recursive: true });
-      }
-      fs.writeFileSync(path.join(imagePath, imgProducto), file.buffer);
-
-      //creo el producto con url de la img
-      const product = await this.productsService.create({
-        ...createProductDto,
-        img: urlImg,
-      });
-
-      return product;
+      return this.productsService.create(createProductDto, file);
     } catch (error) {
       throw new HttpException(
         'Error al cargar la imagen',
@@ -70,7 +51,7 @@ export class ProductsController {
 
   @Get(':id')
   findOne(@Param('id') id: number) {
-    return this.productsService.findOne(+id);
+    return this.productsService.findOne(id);
   }
 
   @Patch(':id')
@@ -87,27 +68,7 @@ export class ProductsController {
           HttpStatus.BAD_REQUEST,
         );
       }
-
-      const imgProducto = file.originalname;
-      const urlImg = `http://localhost:3000/uploads/products/${imgProducto}`;
-
-      // Guardar la imagen en el sistema de archivos
-      const fs = require('fs');
-      const path = require('path');
-      const imageFolder = 'uploads/products';
-      const imagePath = path.join(__dirname, '..', '..', imageFolder);
-      if (!fs.existsSync(imagePath)) {
-        fs.mkdirSync(imagePath, { recursive: true });
-      }
-      fs.writeFileSync(path.join(imagePath, imgProducto), file.buffer);
-
-      //creo el producto con url de la img
-      const product = this.productsService.update(+id, {
-        ...updateProductDto,
-        img: urlImg,
-      });
-
-      return product;
+      return this.productsService.update(id, updateProductDto, file);
     } catch (error) {
       throw new HttpException(
         'Error al cargar la imagen',
@@ -117,7 +78,11 @@ export class ProductsController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: number) {
-    return this.productsService.remove(+id);
+  async remove(@Param('id') id: number) {
+    await this.productsService.remove(id);
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'Producto eliminado correctamente',
+    };
   }
 }

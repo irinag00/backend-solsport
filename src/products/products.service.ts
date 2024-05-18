@@ -1,15 +1,16 @@
 import {
   BadRequestException,
   Injectable,
-  ResponseDecoratorOptions,
+  NotFoundException,
 } from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Product } from './entities/product.entity';
 import { Repository } from 'typeorm';
-import { ADDRGETNETWORKPARAMS } from 'dns';
 import { Category } from 'src/categories/entities/category.entity';
+import { FilesService } from 'src/files/files.service';
+import * as path from 'path';
 
 @Injectable()
 export class ProductsService {
@@ -19,37 +20,47 @@ export class ProductsService {
 
     @InjectRepository(Category)
     private readonly categoryRepository: Repository<Category>,
+
+    private readonly filesService: FilesService,
   ) {}
 
-  async create(createProductDto: CreateProductDto) {
+  async create(createProductDto: CreateProductDto, file: Express.Multer.File) {
     const categoryAll = await this.categoryRepository.findOneBy({
       title: createProductDto.category,
     });
     if (!categoryAll) {
       throw new BadRequestException('Category not found');
     }
-    const { title, description, category, img } = createProductDto;
+    const imgUrl = this.filesService.saveFile(file, 'products');
+    const { title, description } = createProductDto;
     const product = this.productRepository.create({
       title,
       description,
       category: categoryAll,
-      img, // img convertida a url
+      img: imgUrl,
     });
 
     return await this.productRepository.save(product);
   }
 
   async findAll() {
-    // return `This action returns all products`;
     return await this.productRepository.find();
   }
 
   async findOne(id: number) {
-    return await this.productRepository.findOneBy({ id });
-    // return `This action returns a #${id} product`;
+    const product = await this.productRepository.findOneBy({ id });
+    if (!product) {
+      throw new NotFoundException(`Product #${id} not found`);
+    }
+    return product;
   }
 
-  async update(id: number, updateProductDto: UpdateProductDto) {
+  async update(
+    id: number,
+    updateProductDto: UpdateProductDto,
+    file?: Express.Multer.File,
+  ) {
+    const product = await this.findOne(id);
     const categoryAll = await this.categoryRepository.findOneBy({
       title: updateProductDto.category,
     });
@@ -57,17 +68,28 @@ export class ProductsService {
       throw new BadRequestException('Category not found');
     }
 
-    const { title, description, category, img } = updateProductDto;
-    return await this.productRepository.update(id, {
+    if (file) {
+      const fileName = path.basename(product.img);
+      this.filesService.deleteFile(fileName, 'products');
+      updateProductDto.img = this.filesService.saveFile(file, 'products');
+    }
+
+    const { title, description, img } = updateProductDto;
+    return await this.productRepository.save({
+      ...product,
       title,
       description,
       category: categoryAll,
-      img, // img convertida a url
+      img,
     });
-    // return `This action updates a #${id} product`;
   }
 
   async remove(id: number) {
-    return await this.productRepository.delete({ id });
+    const product = await this.findOne(id);
+    if (product.img) {
+      const fileName = path.basename(product.img);
+      this.filesService.deleteFile(fileName, 'products');
+    }
+    return await this.productRepository.remove(product);
   }
 }
