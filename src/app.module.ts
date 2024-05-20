@@ -10,6 +10,7 @@ import { ServicesModule } from './services/services.module';
 import { MaterialsModule } from './materials/materials.module';
 import { ClientsModule } from './clients/clients.module';
 import { UsersModule } from './users/users.module';
+import { ApiKeyModule } from './api-key/api-key.module';
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { UsersModule } from './users/users.module';
     MaterialsModule,
     ClientsModule,
     UsersModule,
+    ApiKeyModule,
   ],
   controllers: [],
   providers: [],

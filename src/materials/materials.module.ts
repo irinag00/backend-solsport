@@ -6,7 +6,7 @@ import { Material } from './entities/material.entity';
 import { FilesModule } from 'src/files/files.module';
 
 @Module({
-  exports: [TypeOrmModule.forFeature([Material]), FilesModule],
+  imports: [TypeOrmModule.forFeature([Material]), FilesModule],
   controllers: [MaterialsController],
   providers: [MaterialsService],
 })
