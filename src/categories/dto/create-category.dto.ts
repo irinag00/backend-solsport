@@ -5,7 +5,6 @@ export class CreateCategoryDto {
   @MinLength(3)
   title: string;
 
-  @IsOptional()
   @IsMimeType()
   img: string;
 }

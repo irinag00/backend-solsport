@@ -6,6 +6,10 @@ import { MulterConfigModule } from './multer.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 import { CategoriesModule } from './categories/categories.module';
+import { ServicesModule } from './services/services.module';
+import { MaterialsModule } from './materials/materials.module';
+import { ClientsModule } from './clients/clients.module';
+import { UsersModule } from './users/users.module';
 
 @Module({
   imports: [
@@ -38,6 +42,10 @@ import { CategoriesModule } from './categories/categories.module';
     MulterConfigModule,
     ProductsModule,
     CategoriesModule,
+    ServicesModule,
+    MaterialsModule,
+    ClientsModule,
+    UsersModule,
   ],
   controllers: [],
   providers: [],
