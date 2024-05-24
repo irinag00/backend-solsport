@@ -10,16 +10,19 @@ import {
   UploadedFile,
   HttpException,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { ServicesService } from './services.service';
 import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { AuthGuard } from 'src/auth/guard/auth.guard';
 
 @Controller('services')
 export class ServicesController {
   constructor(private readonly servicesService: ServicesService) {}
 
+  @UseGuards(AuthGuard)
   @Post()
   @UseInterceptors(FileInterceptor('img'))
   create(
@@ -46,6 +49,7 @@ export class ServicesController {
     return this.servicesService.findOne(id);
   }
 
+  @UseGuards(AuthGuard)
   @Patch(':id')
   @UseInterceptors(FileInterceptor('img'))
   update(
@@ -56,6 +60,7 @@ export class ServicesController {
     return this.servicesService.update(id, updateServiceDto, file);
   }
 
+  @UseGuards(AuthGuard)
   @Delete(':id')
   async remove(@Param('id') id: number) {
     await this.servicesService.remove(id);

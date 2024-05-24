@@ -10,16 +10,19 @@ import {
   UploadedFile,
   HttpException,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { MaterialsService } from './materials.service';
 import { CreateMaterialDto } from './dto/create-material.dto';
 import { UpdateMaterialDto } from './dto/update-material.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { AuthGuard } from 'src/auth/guard/auth.guard';
 
 @Controller('materials')
 export class MaterialsController {
   constructor(private readonly materialsService: MaterialsService) {}
 
+  @UseGuards(AuthGuard)
   @Post()
   @UseInterceptors(FileInterceptor('img'))
   create(
@@ -45,6 +48,7 @@ export class MaterialsController {
     return this.materialsService.findOne(id);
   }
 
+  @UseGuards(AuthGuard)
   @Patch(':id')
   @UseInterceptors(FileInterceptor('img'))
   update(
@@ -55,6 +59,7 @@ export class MaterialsController {
     return this.materialsService.update(id, updateMaterialDto, file);
   }
 
+  @UseGuards(AuthGuard)
   @Delete(':id')
   async remove(@Param('id') id: number) {
     await this.materialsService.remove(id);

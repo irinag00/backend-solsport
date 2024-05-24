@@ -11,6 +11,8 @@ import { MaterialsModule } from './materials/materials.module';
 import { ClientsModule } from './clients/clients.module';
 import { UsersModule } from './users/users.module';
 import { ApiKeyModule } from './api-key/api-key.module';
+import { AuthModule } from './auth/auth.module';
+import { PassportModule } from '@nestjs/passport';
 
 @Module({
   imports: [
@@ -48,6 +50,7 @@ import { ApiKeyModule } from './api-key/api-key.module';
     ClientsModule,
     UsersModule,
     ApiKeyModule,
+    AuthModule,
   ],
   controllers: [],
   providers: [],
