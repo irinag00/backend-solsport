@@ -1,4 +1,4 @@
-import { IsMimeType, IsString, MinLength } from 'class-validator';
+import { IsMimeType, IsOptional, IsString, MinLength } from 'class-validator';
 
 export class CreateMaterialDto {
   @IsString()
@@ -9,6 +9,6 @@ export class CreateMaterialDto {
   @MinLength(3)
   description: string;
 
-  @IsMimeType()
+  @IsOptional()
   img: string;
 }

@@ -57,7 +57,14 @@ export class ServicesController {
     @UploadedFile() file: Express.Multer.File,
     @Body() updateServiceDto: UpdateServiceDto,
   ) {
-    return this.servicesService.update(id, updateServiceDto, file);
+    try {
+      return this.servicesService.update(id, updateServiceDto, file);
+    } catch (error) {
+      throw new HttpException(
+        'Error al actualizar el producto',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   @UseGuards(AuthGuard)

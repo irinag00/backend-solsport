@@ -10,7 +10,6 @@ export class CreateProductDto {
   description: string;
 
   @IsOptional()
-  @IsMimeType()
   img: string;
 
   @IsOptional()

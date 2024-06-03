@@ -56,7 +56,14 @@ export class CategoriesController {
     @UploadedFile() file: Express.Multer.File,
     @Body() updateCategoryDto: UpdateCategoryDto,
   ) {
-    return this.categoriesService.update(id, updateCategoryDto, file);
+    try {
+      return this.categoriesService.update(id, updateCategoryDto, file);
+    } catch (error) {
+      throw new HttpException(
+        'Error al actualizar la categoría',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   @UseGuards(AuthGuard)

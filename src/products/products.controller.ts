@@ -65,16 +65,10 @@ export class ProductsController {
     @Body() updateProductDto: UpdateProductDto,
   ) {
     try {
-      if (!file) {
-        throw new HttpException(
-          'No se ha proporcionado ninguna imagen',
-          HttpStatus.BAD_REQUEST,
-        );
-      }
       return this.productsService.update(id, updateProductDto, file);
     } catch (error) {
       throw new HttpException(
-        'Error al cargar la imagen',
+        'Error al actualizar el producto',
         HttpStatus.INTERNAL_SERVER_ERROR,
       );
     }

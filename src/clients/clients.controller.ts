@@ -56,7 +56,14 @@ export class ClientsController {
     @UploadedFile() file: Express.Multer.File,
     @Body() updateClientDto: UpdateClientDto,
   ) {
-    return this.clientsService.update(id, updateClientDto, file);
+    try {
+      return this.clientsService.update(id, updateClientDto, file);
+    } catch (error) {
+      throw new HttpException(
+        'Error al actualizar el cliente',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   @UseGuards(AuthGuard)

@@ -56,7 +56,14 @@ export class MaterialsController {
     @UploadedFile() file: Express.Multer.File,
     @Body() updateMaterialDto: UpdateMaterialDto,
   ) {
-    return this.materialsService.update(id, updateMaterialDto, file);
+    try {
+      return this.materialsService.update(id, updateMaterialDto, file);
+    } catch (error) {
+      throw new HttpException(
+        'Error al actualizar el material',
+        HttpStatus.INTERNAL_SERVER_ERROR,
+      );
+    }
   }
 
   @UseGuards(AuthGuard)
