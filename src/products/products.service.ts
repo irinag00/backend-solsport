@@ -31,7 +31,7 @@ export class ProductsService {
     if (!categoryAll) {
       throw new BadRequestException('Category not found');
     }
-    const imgUrl = this.filesService.saveFile(file, 'products');
+    const imgUrl = await this.filesService.saveFile(file, 'products');
     const { title, description } = createProductDto;
     const product = this.productRepository.create({
       title,
@@ -71,7 +71,7 @@ export class ProductsService {
     if (file) {
       const fileName = path.basename(product.img);
       this.filesService.deleteFile(fileName, 'products');
-      updateProductDto.img = this.filesService.saveFile(file, 'products');
+      updateProductDto.img = await this.filesService.saveFile(file, 'products');
     }
 
     const { title, description, img } = updateProductDto;
@@ -88,7 +88,7 @@ export class ProductsService {
     const product = await this.findOne(id);
     if (product.img) {
       const fileName = path.basename(product.img);
-      this.filesService.deleteFile(fileName, 'products');
+      await this.filesService.deleteFile(fileName, 'products');
     }
     return await this.productRepository.remove(product);
   }

@@ -25,7 +25,7 @@ export class CategoriesService {
     createCategoryDto: CreateCategoryDto,
     file: Express.Multer.File,
   ) {
-    const imgUrl = this.filesSevice.saveFile(file, 'categories');
+    const imgUrl = await this.filesSevice.saveFile(file, 'categories');
     const category = this.categoryRepository.create({
       ...createCategoryDto,
       img: imgUrl,
@@ -54,7 +54,10 @@ export class CategoriesService {
     if (file) {
       const fileName = path.basename(category.img);
       this.filesSevice.deleteFile(fileName, 'categories');
-      updateCategoryDto.img = this.filesSevice.saveFile(file, 'categories');
+      updateCategoryDto.img = await this.filesSevice.saveFile(
+        file,
+        'categories',
+      );
     }
 
     const { title, img } = updateCategoryDto;
@@ -69,7 +72,7 @@ export class CategoriesService {
     const category = await this.findOne(id);
     if (category.img) {
       const fileName = path.basename(category.img);
-      this.filesSevice.deleteFile(fileName, 'categories');
+      await this.filesSevice.deleteFile(fileName, 'categories');
     }
     // Verificar si existen productos relacionados con la categoría
     const relatedProducts = await this.productRepository.find({

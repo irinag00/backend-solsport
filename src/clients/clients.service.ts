@@ -15,7 +15,7 @@ export class ClientsService {
     private readonly filesSevice: FilesService,
   ) {}
   async create(createClientDto: CreateClientDto, file: Express.Multer.File) {
-    const imgUrl = this.filesSevice.saveFile(file, 'clients');
+    const imgUrl = await this.filesSevice.saveFile(file, 'clients');
     const client = this.clientRepository.create({
       ...createClientDto,
       img: imgUrl,
@@ -44,7 +44,7 @@ export class ClientsService {
     if (file) {
       const fileName = path.basename(client.img);
       this.filesSevice.deleteFile(fileName, 'clients');
-      updateClientDto.img = this.filesSevice.saveFile(file, 'clients');
+      updateClientDto.img = await this.filesSevice.saveFile(file, 'clients');
     }
 
     const { title, img } = updateClientDto;
@@ -59,7 +59,7 @@ export class ClientsService {
     const client = await this.findOne(id);
     if (client.img) {
       const fileName = path.basename(client.img);
-      this.filesSevice.deleteFile(fileName, 'clients');
+      await this.filesSevice.deleteFile(fileName, 'clients');
     }
     await this.clientRepository.remove(client);
   }

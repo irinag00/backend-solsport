@@ -15,7 +15,7 @@ export class ServicesService {
     private readonly filesService: FilesService,
   ) {}
   async create(createServiceDto: CreateServiceDto, file: Express.Multer.File) {
-    const imgUrl = this.filesService.saveFile(file, 'services');
+    const imgUrl = await this.filesService.saveFile(file, 'services');
     const service = this.serviceRepository.create({
       ...createServiceDto,
       img: imgUrl,
@@ -44,7 +44,7 @@ export class ServicesService {
     if (file) {
       const fileName = path.basename(service.img);
       this.filesService.deleteFile(fileName, 'services');
-      updateServiceDto.img = this.filesService.saveFile(file, 'services');
+      updateServiceDto.img = await this.filesService.saveFile(file, 'services');
     }
     const { title, img, description } = updateServiceDto;
     return await this.serviceRepository.save({
@@ -59,7 +59,7 @@ export class ServicesService {
     const service = await this.findOne(id);
     if (service.img) {
       const fileName = path.basename(service.img);
-      this.filesService.deleteFile(fileName, 'services');
+      await this.filesService.deleteFile(fileName, 'services');
     }
 
     await this.serviceRepository.remove(service);

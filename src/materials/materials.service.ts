@@ -18,7 +18,7 @@ export class MaterialsService {
     createMaterialDto: CreateMaterialDto,
     file: Express.Multer.File,
   ) {
-    const imgUrl = this.filesService.saveFile(file, 'materials');
+    const imgUrl = await this.filesService.saveFile(file, 'materials');
     const material = this.materialRepository.create({
       ...createMaterialDto,
       img: imgUrl,
@@ -47,7 +47,10 @@ export class MaterialsService {
     if (file) {
       const fileName = path.basename(material.img);
       this.filesService.deleteFile(fileName, 'materials');
-      updateMaterialDto.img = this.filesService.saveFile(file, 'materials');
+      updateMaterialDto.img = await this.filesService.saveFile(
+        file,
+        'materials',
+      );
     }
     const { title, img, description } = updateMaterialDto;
     return await this.materialRepository.save({
@@ -62,7 +65,7 @@ export class MaterialsService {
     const material = await this.findOne(id);
     if (material.img) {
       const fileName = path.basename(material.img);
-      this.filesService.deleteFile(fileName, 'materials');
+      await this.filesService.deleteFile(fileName, 'materials');
     }
 
     await this.materialRepository.remove(material);

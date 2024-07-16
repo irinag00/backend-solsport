@@ -3,7 +3,6 @@
 /node_modules
 /build
 postgres
-docker-compose.yml
 
 # Logs
 logs

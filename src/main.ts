@@ -38,7 +38,18 @@ async function bootstrap() {
 
   // Configuración de CORS
   const corsOptions: CorsOptions = {
-    origin: 'http://localhost:5173', // Cambia esto con el origen de tu aplicación React
+    origin: (origin, callback) => {
+      const allowedOrigins = [
+        'https://solsport.vercel.app',
+        'http://localhost:5173',
+        'https://sociedadcosmopolita.com.ar/irinagorlino/',
+      ];
+      if (allowedOrigins.includes(origin) || !origin) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
     preflightContinue: false,
     optionsSuccessStatus: 204,
