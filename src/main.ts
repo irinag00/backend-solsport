@@ -13,6 +13,7 @@ import * as passport from 'passport';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const apiKeyService = app.get(ApiKeyService);
+  const port = process.env.PORT || 3000;
 
   app.setGlobalPrefix('api/v1');
 
@@ -42,7 +43,7 @@ async function bootstrap() {
       const allowedOrigins = [
         'https://solsport.vercel.app',
         'http://localhost:5173',
-        'https://sociedadcosmopolita.com.ar/irinagorlino/',
+        'https://sociedadcosmopolita.com.ar',
       ];
       if (allowedOrigins.includes(origin) || !origin) {
         callback(null, true);
@@ -67,6 +68,6 @@ async function bootstrap() {
 
   app.useGlobalGuards(new ApiKeyGuard(apiKeyService));
 
-  await app.listen(3000);
+  await app.listen(port);
 }
 bootstrap();

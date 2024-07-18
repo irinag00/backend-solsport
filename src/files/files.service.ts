@@ -49,7 +49,6 @@ dotenv.config();
 
 @Injectable()
 export class FilesService {
-  private readonly ftpClient: ftp;
   private readonly ftpConfig = {
     host: process.env.FTP_HOST,
     user: process.env.FTP_USERNAME,
@@ -57,45 +56,51 @@ export class FilesService {
     port: 21,
   };
 
-  constructor() {
-    this.ftpClient = new ftp();
-    this.ftpClient.connect(this.ftpConfig);
+  private connectToFtp(): Promise<ftp> {
+    return new Promise((resolve, reject) => {
+      const client = new ftp();
+      client.on('ready', () => resolve(client));
+      client.on('error', (err) => reject(err));
+      client.connect(this.ftpConfig);
+    });
   }
 
-  saveFile(file: Express.Multer.File, entity: string): Promise<string> {
+  async saveFile(file: Express.Multer.File, entity: string): Promise<string> {
+    const client = await this.connectToFtp();
+    const entityFolderPath = `/uploads/${entity}`;
+    const ftpFilePath = `${entityFolderPath}/${file.originalname}`;
+
     return new Promise((resolve, reject) => {
-      this.ftpClient.on('ready', () => {
-        const entityFolderPath = `/irinagorlino/uploads/${entity}`;
-        const ftpFilePath = `${entityFolderPath}/${file.originalname}`;
+      client.mkdir(entityFolderPath, true, (err) => {
+        if (err) {
+          client.end();
+          return reject(err);
+        }
 
-        this.ftpClient.mkdir(entityFolderPath, true, (err) => {
-          if (err) reject(err);
-
-          this.ftpClient.put(file.buffer, ftpFilePath, (err) => {
-            if (err) reject(err);
-            resolve(`https://sociedadcosmopolita.com.ar${ftpFilePath}`);
-            this.ftpClient.end();
-          });
+        client.put(file.buffer, ftpFilePath, (err) => {
+          client.end();
+          if (err) return reject(err);
+          resolve(
+            `https://sociedadcosmopolita.com.ar/irinagorlino${ftpFilePath}`,
+          );
         });
       });
     });
   }
 
-  deleteFile(filePath: string, entity: string): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const fullFilePath = `/irinagorlino/uploads/${entity}/${filePath}`;
+  async deleteFile(filePath: string, entity: string): Promise<void> {
+    const client = await this.connectToFtp();
+    const fullFilePath = `/uploads/${entity}/${filePath}`;
 
-      this.ftpClient.on('ready', () => {
-        this.ftpClient.delete(fullFilePath, (err) => {
-          if (err) {
-            reject(
-              new NotFoundException(`File ${filePath} not found in ${entity}`),
-            );
-          } else {
-            resolve();
-          }
-          this.ftpClient.end();
-        });
+    return new Promise((resolve, reject) => {
+      client.delete(fullFilePath, (err) => {
+        client.end();
+        if (err) {
+          return reject(
+            new NotFoundException(`File ${filePath} not found in ${entity}`),
+          );
+        }
+        resolve();
       });
     });
   }
