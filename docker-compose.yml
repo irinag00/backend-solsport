@@ -12,7 +12,7 @@ services:
     ports:
       - '5436:5432'
   app:
-    build: ./path-to-your-app # Cambia esto por la ruta a tu Dockerfile
+    build: ./Dockerfile # Cambia esto por la ruta a tu Dockerfile
     environment:
       - DATABASE_URL=postgresql://${POSTGRES_USERNAME}:${POSTGRES_PASSWORD}@192.168.100.28:5432/${POSTGRES_DATABASE}
     ports:
