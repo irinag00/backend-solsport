@@ -1,11 +1,13 @@
-# Usa la imagen oficial de Node.js como base
-FROM node:14
+# Establece la imagen base
+FROM node:18-alpine
 
-# Establece el directorio de trabajo dentro del contenedor
-WORKDIR /usr/src/app
+# Establece el directorio de trabajo
+WORKDIR /app
 
-# Copia el archivo package.json y package-lock.json
+# Copia los archivos del proyecto
 COPY package*.json ./
+COPY tsconfig*.json ./
+COPY src ./src
 
 # Instala las dependencias de la aplicación
 RUN npm install
