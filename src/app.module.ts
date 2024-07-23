@@ -12,7 +12,6 @@ import { ClientsModule } from './clients/clients.module';
 import { UsersModule } from './users/users.module';
 import { ApiKeyModule } from './api-key/api-key.module';
 import { AuthModule } from './auth/auth.module';
-import { PassportModule } from '@nestjs/passport';
 
 @Module({
   imports: [
@@ -20,18 +19,18 @@ import { PassportModule } from '@nestjs/passport';
       isGlobal: true,
     }),
     TypeOrmModule.forRoot({
-      type: 'postgres',
-      host: process.env.POSTGRES_HOST,
-      port: parseInt(process.env.POSTGRES_PORT),
-      username: process.env.POSTGRES_USERNAME,
-      password: process.env.POSTGRES_PASSWORD,
-      database: process.env.POSTGRES_DATABASE,
+      type: 'mysql',
+      host: process.env.MYSQL_HOST,
+      port: parseInt(process.env.MYSQL_PORT),
+      username: process.env.MYSQL_USERNAME,
+      password: process.env.MYSQL_PASSWORD,
+      database: process.env.MYSQL_DATABASE,
       autoLoadEntities: true,
       synchronize: true,
-      ssl: process.env.POSTGRES_SSL === 'true',
+      ssl: process.env.MYSQL_SSL === 'true',
       extra: {
         ssl:
-          process.env.POSTGRES_SSL === 'true'
+          process.env.MYSQL_SSL === 'true'
             ? {
                 rejectUnauthorized: false,
               }
