@@ -29,7 +29,8 @@ import { PassportModule } from '@nestjs/passport';
       autoLoadEntities: true,
       synchronize: true,
       ssl: {
-        rejectUnauthorized: false, // Si tu base de datos requiere SSL
+        rejectUnauthorized: true,
+        ca: process.env.AIVEN_SSL,
       },
     }),
     ServeStaticModule.forRoot({
