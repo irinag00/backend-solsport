@@ -1,25 +1,35 @@
-# Use an existing image as a base
-FROM node:18-alpine
+# Usa una imagen base con Node.js
+FROM node:18 AS build
 
-# Set the working directory
-WORKDIR /app
+# Define el directorio de trabajo
+WORKDIR /usr/src/app
 
-# Copy the package.json and package-lock.json files
+# Copia los archivos de tu proyecto
 COPY package*.json ./
 COPY tsconfig*.json ./
 COPY src ./src
 
-# Instala las dependencias de la aplicación
+# Instala las dependencias
 RUN npm install
 
-# Copia el resto del código de la aplicación
-COPY . .
-
-# Construye la aplicación NestJS
+# Compila el proyecto
 RUN npm run build
 
-# Expone el puerto en el que se ejecuta la aplicación
+# Define una segunda etapa para la imagen de producción
+FROM node:18 AS production
+
+# Define el directorio de trabajo
+WORKDIR /usr/src/app
+
+# Copia los archivos compilados desde la etapa de construcción
+COPY --from=build /usr/src/app/dist ./dist
+COPY package*.json ./
+
+# Instala solo las dependencias de producción
+RUN npm install --only=production
+
+# Expone el puerto que usa tu aplicación
 EXPOSE 3000
 
-# Comando para ejecutar la aplicación
+# Define el comando para iniciar la aplicación
 CMD ["npm", "run", "start:prod"]

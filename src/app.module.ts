@@ -21,22 +21,12 @@ import { PassportModule } from '@nestjs/passport';
     }),
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: process.env.POSTGRES_HOST,
-      port: parseInt(process.env.POSTGRES_PORT),
-      username: process.env.POSTGRES_USERNAME,
-      password: process.env.POSTGRES_PASSWORD,
-      database: process.env.POSTGRES_DATABASE,
+      url: process.env.POSTGRES_URL,
       autoLoadEntities: true,
       synchronize: true,
-      ssl: process.env.POSTGRES_SSL === 'true',
-      extra: {
-        ssl:
-          process.env.POSTGRES_SSL === 'true'
-            ? {
-                rejectUnauthorized: false,
-              }
-            : null,
-      },
+      ssl: process.env.POSTGRES_URL?.includes('sslmode=require')
+        ? { rejectUnauthorized: false }
+        : undefined,
     }),
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'uploads'), // Ruta al directorio de archivos estáticos
