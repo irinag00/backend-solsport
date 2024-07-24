@@ -1,0 +1,16 @@
+# Ignorar la carpeta de dependencias locales
+node_modules
+
+# Ignorar el directorio de construcción de TypeScript
+dist
+
+# Ignorar archivos de configuración de TypeScript
+tsconfig.json
+tsconfig.build.json
+
+# Ignorar archivos de log
+*.log
+
+# Ignorar el directorio de pruebas
+test
+*.test.ts
