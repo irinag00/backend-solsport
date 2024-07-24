@@ -1,5 +1,5 @@
 # Usa una imagen base con Node.js
-FROM node:18 AS build
+FROM node:20-alpine AS build
 
 # Define el directorio de trabajo
 WORKDIR /usr/src/app
@@ -16,7 +16,7 @@ RUN npm install
 RUN npm run build
 
 # Define una segunda etapa para la imagen de producción
-FROM node:18 AS production
+FROM node:20-alpine AS production
 
 # Define el directorio de trabajo
 WORKDIR /usr/src/app
