@@ -4,11 +4,7 @@ import { AppModule } from './app.module';
 import { CorsOptions } from '@nestjs/common/interfaces/external/cors-options.interface';
 import { ApiKeyService } from './api-key/api-key.service';
 import { ApiKeyGuard } from './api-key/guards/api-key.guard';
-import { UsersService } from './users/users.service';
-import * as bcrypt from 'bcryptjs';
-import * as cookieParser from 'cookie-parser';
-import * as session from 'express-session';
-import * as passport from 'passport';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -16,26 +12,6 @@ async function bootstrap() {
   const port = process.env.PORT || 3000;
 
   app.setGlobalPrefix('api/v1');
-
-  // Crear una API Key inicial si no existe
-  // const existingKeys = await apiKeyService.findAll();
-  // if (existingKeys.length === 0) {
-  //   const newApiKey = await apiKeyService.generate();
-  //   console.log('API Key creada:', newApiKey.key);
-  // }
-
-  // const username = 'solsport-admin';
-  // const password = process.env.PASSWORD_ADMIN;
-  // if (!password) {
-  //   throw new Error(
-  //     'PASSWORD_ADMIN no está definida en las variables de entorno',
-  //   );
-  // }
-
-  // await userService.create({
-  //   username,
-  //   password,
-  // });
 
   // Configuración de CORS
   const corsOptions: CorsOptions = {
@@ -65,6 +41,15 @@ async function bootstrap() {
       transform: true,
     }),
   );
+
+  const config = new DocumentBuilder()
+    .setTitle('API Solsport')
+    .setDescription('API creada para la página web de Solsport.')
+    .setVersion('1.0')
+    .addBearerAuth()
+    .build();
+  const document = SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('docs', app, document);
 
   app.useGlobalGuards(new ApiKeyGuard(apiKeyService));
 

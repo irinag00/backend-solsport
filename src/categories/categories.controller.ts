@@ -17,11 +17,14 @@ import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from 'src/auth/guard/auth.guard';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('categories')
 @Controller('categories')
 export class CategoriesController {
   constructor(private readonly categoriesService: CategoriesService) {}
 
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Post()
   @UseInterceptors(FileInterceptor('img'))
@@ -48,6 +51,7 @@ export class CategoriesController {
     return this.categoriesService.findOne(id);
   }
 
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Patch(':id')
   @UseInterceptors(FileInterceptor('img'))
@@ -66,6 +70,7 @@ export class CategoriesController {
     }
   }
 
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Delete(':id')
   async remove(@Param('id') id: number) {

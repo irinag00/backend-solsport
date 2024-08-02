@@ -17,11 +17,14 @@ import { CreateServiceDto } from './dto/create-service.dto';
 import { UpdateServiceDto } from './dto/update-service.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from 'src/auth/guard/auth.guard';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('services')
 @Controller('services')
 export class ServicesController {
   constructor(private readonly servicesService: ServicesService) {}
 
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Post()
   @UseInterceptors(FileInterceptor('img'))
@@ -49,6 +52,7 @@ export class ServicesController {
     return this.servicesService.findOne(id);
   }
 
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Patch(':id')
   @UseInterceptors(FileInterceptor('img'))
@@ -67,6 +71,7 @@ export class ServicesController {
     }
   }
 
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Delete(':id')
   async remove(@Param('id') id: number) {

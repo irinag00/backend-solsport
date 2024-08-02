@@ -17,11 +17,14 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from 'src/auth/guard/auth.guard';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('products')
 @Controller('products')
 export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Post()
   @UseInterceptors(FileInterceptor('img'))
@@ -56,6 +59,7 @@ export class ProductsController {
     return this.productsService.findOne(id);
   }
 
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Patch(':id')
   @UseInterceptors(FileInterceptor('img'))
@@ -74,6 +78,7 @@ export class ProductsController {
     }
   }
 
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Delete(':id')
   async remove(@Param('id') id: number) {

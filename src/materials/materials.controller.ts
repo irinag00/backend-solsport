@@ -17,11 +17,14 @@ import { CreateMaterialDto } from './dto/create-material.dto';
 import { UpdateMaterialDto } from './dto/update-material.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { AuthGuard } from 'src/auth/guard/auth.guard';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('materials')
 @Controller('materials')
 export class MaterialsController {
   constructor(private readonly materialsService: MaterialsService) {}
 
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Post()
   @UseInterceptors(FileInterceptor('img'))
@@ -48,6 +51,7 @@ export class MaterialsController {
     return this.materialsService.findOne(id);
   }
 
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Patch(':id')
   @UseInterceptors(FileInterceptor('img'))
@@ -66,6 +70,7 @@ export class MaterialsController {
     }
   }
 
+  @ApiBearerAuth()
   @UseGuards(AuthGuard)
   @Delete(':id')
   async remove(@Param('id') id: number) {

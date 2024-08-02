@@ -12,7 +12,9 @@ import {
 import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 import { AuthGuard } from './guard/auth.guard';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
+@ApiTags('authentication')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
@@ -30,6 +32,7 @@ export class AuthController {
     return { token, user };
   }
 
+  @ApiBearerAuth()
   @Get('status')
   @UseGuards(AuthGuard)
   async status() {
